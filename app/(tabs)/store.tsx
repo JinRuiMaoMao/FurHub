@@ -1,8 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import * as Clipboard from 'expo-clipboard';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLayoutEffect, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -18,6 +17,7 @@ export default function StoreScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useI18n();
   const [busyItem, setBusyItem] = useState<'vip' | 'coin' | null>(null);
+  const [paySheetItem, setPaySheetItem] = useState<'vip' | 'coin' | null>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: t('storeTitle') });
@@ -52,43 +52,15 @@ export default function StoreScreen() {
   };
 
   const onBuy = (item: 'vip' | 'coin') => {
-    const onWechat = async () => {
-      const code = item === 'vip' ? '001' : '002';
-      const note = `#付款:金瑞毛毛金尚市轨交(JinRui_MaoMao)/FurHub/${code}`;
-      await Clipboard.setStringAsync(note);
-      Alert.alert(
-        t('storeWechatCopiedTitle'),
-        t('storeWechatCopiedBody').replace('{note}', note),
-        [
-          {
-            text: t('storePaidConfirm'),
-            onPress: () => {
-              void doPay(item, t('storePayWechat'));
-            },
-          },
-          { text: t('storePayCancel'), style: 'cancel' },
-        ],
-      );
-    };
-
-    const channels = [
-      { label: t('storePayWechat'), onPress: () => void onWechat() },
-      { label: t('storePayAlipay') },
-      { label: t('storePayApple') },
-      { label: t('storePayGoogle') },
-    ];
-    Alert.alert(
-      t('storeSelectPayMethod'),
-      item === 'vip' ? t('storeVipName') : t('storeCoinName'),
-      [
-        ...channels.map((x) => ({
-          text: x.label,
-          onPress: x.onPress ?? (() => void doPay(item, x.label)),
-        })),
-        { text: t('storePayCancel'), style: 'cancel' as const },
-      ],
-    );
+    setPaySheetItem(item);
   };
+
+  const channels = [
+    { label: t('storePayWechat') },
+    { label: t('storePayAlipay') },
+    { label: t('storePayApple') },
+    { label: t('storePayGoogle') },
+  ];
 
   return (
     <TabSwipeShell variant="standard">
@@ -134,6 +106,35 @@ export default function StoreScreen() {
         </View>
       </GlassCard>
       </ScrollView>
+      <Modal
+        visible={paySheetItem != null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPaySheetItem(null)}>
+        <Pressable style={styles.sheetBackdrop} onPress={() => setPaySheetItem(null)}>
+          <Pressable style={styles.sheetCard} onPress={() => {}}>
+            <Text style={styles.sheetTitle}>{t('storeSelectPayMethod')}</Text>
+            <Text style={styles.sheetSub}>
+              {paySheetItem === 'vip' ? t('storeVipName') : t('storeCoinName')}
+            </Text>
+            {channels.map((x) => (
+              <Pressable
+                key={x.label}
+                style={styles.sheetOption}
+                onPress={() => {
+                  const item = paySheetItem;
+                  setPaySheetItem(null);
+                  if (item) void doPay(item, x.label);
+                }}>
+                <Text style={styles.sheetOptionText}>{x.label}</Text>
+              </Pressable>
+            ))}
+            <Pressable style={[styles.sheetOption, styles.sheetCancel]} onPress={() => setPaySheetItem(null)}>
+              <Text style={styles.sheetCancelText}>{t('storePayCancel')}</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </TabSwipeShell>
   );
 }
@@ -190,5 +191,54 @@ const styles = StyleSheet.create({
   },
   vipTextStrong: {
     color: '#2b1a00',
+  },
+  sheetBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.28)',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  sheetCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(32,32,38,0.94)',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.18)',
+  },
+  sheetTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    color: '#fff',
+  },
+  sheetSub: {
+    fontSize: 13,
+    opacity: 0.8,
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 10,
+    color: '#fff',
+  },
+  sheetOption: {
+    minHeight: 48,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(255,255,255,0.14)',
+  },
+  sheetOptionText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  sheetCancel: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+  },
+  sheetCancelText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#ffb4b4',
   },
 });

@@ -70,6 +70,7 @@ export default function NearbyAndroidMap() {
   const { t, lang } = useI18n();
   const [selectedYear, setSelectedYear] = useState<string>(FILTER_ALL);
   const [selectedMonth, setSelectedMonth] = useState<number | typeof FILTER_ALL>(FILTER_ALL);
+  const [panelOpen, setPanelOpen] = useState(true);
   const panelWidth = Math.min(380, Math.max(220, screenWidth - 24));
 
   const years = useMemo(
@@ -115,38 +116,51 @@ export default function NearbyAndroidMap() {
 
   return (
     <View style={styles.root}>
-      <View style={styles.panelInlineWrap}>
-        <GlassSurface
-          borderRadius={20}
-          intensity={56}
-          padding={12}
-          vibe="neutral"
-          style={[styles.panelInline, { width: panelWidth }]}>
-          <Text style={styles.panelTitle}>{t('mapTitle')}</Text>
-          <Text style={styles.panelSub}>{t('mapNativeSubtitle')}</Text>
-          <View style={styles.filtersWrap}>
-            <Text style={styles.filterLabel}>{t('mapYear')}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-              <FilterChip label={t('mapAll')} active={selectedYear === FILTER_ALL} onPress={() => setSelectedYear(FILTER_ALL)} />
-              {years.map((year) => (
-                <FilterChip key={year} label={year} active={selectedYear === year} onPress={() => setSelectedYear(year)} />
-              ))}
-            </ScrollView>
-            <Text style={[styles.filterLabel, styles.filterLabelMonth]}>{t('mapMonth')}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-              <FilterChip label={t('mapAll')} active={selectedMonth === FILTER_ALL} onPress={() => setSelectedMonth(FILTER_ALL)} />
-              {monthsForYear.map((month) => (
-                <FilterChip
-                  key={month}
-                  label={monthChipLabel(lang, month)}
-                  active={selectedMonth === month}
-                  onPress={() => setSelectedMonth(month)}
-                />
-              ))}
-            </ScrollView>
-          </View>
-        </GlassSurface>
-      </View>
+      {panelOpen ? (
+        <View style={styles.panelInlineWrap}>
+          <GlassSurface
+            borderRadius={20}
+            intensity={56}
+            padding={12}
+            vibe="neutral"
+            style={[styles.panelInline, { width: panelWidth }]}>
+            <View style={styles.panelHeaderRow}>
+              <Text style={styles.panelTitle}>{t('mapTitle')}</Text>
+              <Pressable onPress={() => setPanelOpen(false)} style={styles.hideBtn}>
+                <Text style={styles.hideBtnText}>{t('mapFilterHide')}</Text>
+              </Pressable>
+            </View>
+            <Text style={styles.panelSub}>{t('mapNativeSubtitle')}</Text>
+            <View style={styles.filtersWrap}>
+              <Text style={styles.filterLabel}>{t('mapYear')}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
+                <FilterChip label={t('mapAll')} active={selectedYear === FILTER_ALL} onPress={() => setSelectedYear(FILTER_ALL)} />
+                {years.map((year) => (
+                  <FilterChip key={year} label={year} active={selectedYear === year} onPress={() => setSelectedYear(year)} />
+                ))}
+              </ScrollView>
+              <Text style={[styles.filterLabel, styles.filterLabelMonth]}>{t('mapMonth')}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
+                <FilterChip label={t('mapAll')} active={selectedMonth === FILTER_ALL} onPress={() => setSelectedMonth(FILTER_ALL)} />
+                {monthsForYear.map((month) => (
+                  <FilterChip
+                    key={month}
+                    label={monthChipLabel(lang, month)}
+                    active={selectedMonth === month}
+                    onPress={() => setSelectedMonth(month)}
+                  />
+                ))}
+              </ScrollView>
+            </View>
+          </GlassSurface>
+        </View>
+      ) : (
+        <View style={styles.showBtnWrap}>
+          <Pressable onPress={() => setPanelOpen(true)} style={styles.showBtn}>
+            <Text style={styles.showBtnText}>{t('mapFilterShow')}</Text>
+          </Pressable>
+        </View>
+      )}
       <WebView
         style={styles.webview}
         source={{ html }}
@@ -189,8 +203,44 @@ const styles = StyleSheet.create({
     elevation: 30,
   },
   panelInline: { maxHeight: 190 },
+  panelHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
   panelTitle: { fontSize: 16, fontWeight: '700' },
   panelSub: { marginTop: 4, fontSize: 12, lineHeight: 16, opacity: 0.72 },
+  hideBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.14)',
+  },
+  hideBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  showBtnWrap: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 30,
+    elevation: 30,
+  },
+  showBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: 'rgba(32,32,38,0.8)',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.22)',
+  },
+  showBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#fff',
+  },
   filtersWrap: { marginTop: 2 },
   filterLabel: { fontSize: 12, opacity: 0.68 },
   filterLabelMonth: { marginTop: 6 },
