@@ -14,9 +14,20 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.furhub.app",
+      "supportsTablet": true,
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "mqqapi",
+          "bilibili",
+          "bilibilihd",
+          "weixin",
+          "wechat"
+        ]
+      }
     },
     "android": {
+      "package": "com.furhub.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -34,6 +45,19 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "22f6afcc-5673-435e-8652-1cbd758cdeed"
+      }
+    },
+    "owner": "jinrui_maomao",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/22f6afcc-5673-435e-8652-1cbd758cdeed"
     }
   }
 }
