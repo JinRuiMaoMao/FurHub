@@ -10,7 +10,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE, type MapStyleElement } from 'react-native-maps';
+import MapView, { Marker, type MapStyleElement } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GlassButton } from '@/components/GlassButton';
@@ -57,6 +57,13 @@ export default function NearbyNativeMap() {
   const buttonRight = FLOAT_BTN_GAP;
 
   useFocusEffect(useCallback(() => () => setPanelOpen(false), []));
+
+  useEffect(() => {
+    if (mapReady) return;
+    // Failsafe: some Android devices never fire onMapReady, which would keep touch shield forever.
+    const id = setTimeout(() => setMapReady(true), 2500);
+    return () => clearTimeout(id);
+  }, [mapReady]);
 
   const years = useMemo(
     () =>
@@ -139,9 +146,8 @@ export default function NearbyNativeMap() {
           loadingEnabled={Platform.OS === 'android'}
           removeClippedSubviews={Platform.OS === 'android' ? false : undefined}
           onMapReady={() => setMapReady(true)}
-          userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
-          customMapStyle={scheme === 'dark' ? DARK_MAP_STYLE : []}
-          provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}>
+          onMapLoaded={() => setMapReady(true)}
+          customMapStyle={scheme === 'dark' ? DARK_MAP_STYLE : undefined}>
           {filteredGatherings.map((g) => (
             <Marker
               key={g.id}

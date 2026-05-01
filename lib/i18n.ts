@@ -38,7 +38,7 @@ export const MESSAGES = {
     mapTitle: 'Gathering map',
     mapWebSubtitle:
       'The native map is not available on Web. Use the iOS / Android app. List data matches FEC event coordinates.',
-    mapNativeSubtitle: 'Tap a red pin for details.',
+    mapNativeSubtitle: 'Tap a marker for details.',
     mapYear: 'Year',
     mapMonth: 'Month',
     mapAll: 'All',

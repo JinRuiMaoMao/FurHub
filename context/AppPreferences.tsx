@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useColorScheme as useRNColorScheme } from 'react-native';
+import { useColorScheme as useRNColorScheme, type ColorSchemeName } from 'react-native';
 
 import {
   loadAppPrefs,
@@ -34,7 +34,7 @@ const AppPreferencesContext = createContext<AppPreferencesContextValue | null>(n
 
 function resolveNavigationScheme(
   pref: ThemePreference,
-  system: 'light' | 'dark' | null | undefined,
+  system: ColorSchemeName,
 ): 'light' | 'dark' {
   if (pref === 'light') return 'light';
   if (pref === 'dark') return 'dark';

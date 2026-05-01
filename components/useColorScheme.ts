@@ -11,11 +11,12 @@ export function useColorScheme(): 'light' | 'dark' | null {
   const prefs = useAppPreferencesOptional();
 
   return useMemo(() => {
+    const normalizedSystem = system === 'light' || system === 'dark' ? system : null;
     if (!prefs?.ready) {
-      return system ?? 'light';
+      return normalizedSystem ?? 'light';
     }
     if (prefs.prefs.theme === 'light') return 'light';
     if (prefs.prefs.theme === 'dark') return 'dark';
-    return system ?? 'light';
+    return normalizedSystem ?? 'light';
   }, [prefs?.ready, prefs?.prefs.theme, system]);
 }

@@ -12,6 +12,14 @@ export default function NearbyRouteScreen() {
       </TabSwipeShell>
     );
   }
+  if (Platform.OS === 'android') {
+    const NearbyAndroidMap = require('@/components/NearbyAndroidMap').default as ComponentType;
+    return (
+      <TabSwipeShell variant="map-friendly">
+        <NearbyAndroidMap />
+      </TabSwipeShell>
+    );
+  }
   const NearbyNativeMap = require('@/components/NearbyNativeMap').default as ComponentType;
   return (
     <TabSwipeShell variant="map-friendly">

@@ -30,11 +30,18 @@ export type GlassButtonProps = {
   textStyle?: StyleProp<TextStyle>;
 };
 
-function buttonIntensity(compact: boolean, mode: 'default' | 'icon'): number {
+function buttonIntensity(
+  compact: boolean,
+  mode: 'default' | 'icon',
+  scheme: 'light' | 'dark',
+): number {
   if (mode === 'icon') {
-    return 58;
+    return scheme === 'light' ? 52 : 58;
   }
-  return compact ? 52 : 56;
+  if (compact) {
+    return scheme === 'light' ? 46 : 52;
+  }
+  return scheme === 'light' ? 50 : 56;
 }
 
 export const GlassButton = React.forwardRef<PressableRef, GlassButtonProps>(function GlassButton(
@@ -58,6 +65,7 @@ export const GlassButton = React.forwardRef<PressableRef, GlassButtonProps>(func
 
   const corner = mode === 'icon' ? 20 : 14;
   const vibe = variant === 'prominent' ? 'prominent' : 'neutral';
+  const useAndroidLightFallback = Platform.OS === 'android' && colorScheme === 'light';
 
   const contentStyle =
     mode === 'icon'
@@ -83,11 +91,27 @@ export const GlassButton = React.forwardRef<PressableRef, GlassButtonProps>(func
         style,
       ]}>
       <View style={[styles.clip, { borderRadius: corner }]}>
-        <GlassMorphismLayers
-          borderRadius={corner}
-          intensity={buttonIntensity(compact, mode)}
-          vibe={vibe}
-        />
+        {useAndroidLightFallback ? (
+          <View
+            style={[
+              StyleSheet.absoluteFillObject,
+              {
+                borderRadius: corner,
+                backgroundColor:
+                  variant === 'prominent' ? 'rgba(99,102,241,0.22)' : 'rgba(60,60,67,0.12)',
+              },
+            ]}
+          />
+        ) : (
+          <>
+            <GlassMorphismLayers
+              borderRadius={corner}
+              intensity={buttonIntensity(compact, mode, colorScheme)}
+              vibe={vibe}
+              showBorder={false}
+            />
+          </>
+        )}
         <View style={contentStyle}>
           {children ??
             (label != null ? (
@@ -109,7 +133,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.18,
         shadowRadius: 14,
       },
-      android: { elevation: 5 },
+      android: { elevation: 0 },
       default: {},
     }),
   },
@@ -161,9 +185,17 @@ const styles = StyleSheet.create({
   labelDefault: {
     fontSize: 16,
     fontWeight: '700',
+    includeFontPadding: false,
+    textShadowColor: 'transparent',
+    textShadowRadius: 0,
+    textShadowOffset: { width: 0, height: 0 },
   },
   labelCompact: {
     fontSize: 14,
     fontWeight: '600',
+    includeFontPadding: false,
+    textShadowColor: 'transparent',
+    textShadowRadius: 0,
+    textShadowOffset: { width: 0, height: 0 },
   },
 });

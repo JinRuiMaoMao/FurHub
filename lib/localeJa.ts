@@ -23,7 +23,7 @@ export const jaMessages: { [K in keyof ZhMessages]: string } = {
   mapTitle: 'イベントマップ',
   mapWebSubtitle:
     'Web ではネイティブ地図は利用できません。iOS / Android アプリをご利用ください。一覧は FEC イベント座標と一致します。',
-  mapNativeSubtitle: '赤いピンをタップして詳細を表示。',
+  mapNativeSubtitle: 'ピンをタップして詳細を表示。',
   mapYear: '年',
   mapMonth: '月',
   mapAll: 'すべて',

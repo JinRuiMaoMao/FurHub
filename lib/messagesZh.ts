@@ -20,7 +20,7 @@ export const zhMessages = {
   mapTitle: '兽聚地图',
   mapWebSubtitle:
     'Web 端暂不支持原生地图，请使用 iOS / Android 客户端；下列数据与 FEC 展会页坐标一致。',
-  mapNativeSubtitle: '点击红标查看详情。',
+  mapNativeSubtitle: '点击标记查看详情。',
   mapYear: '年份',
   mapMonth: '月份',
   mapAll: '全部',

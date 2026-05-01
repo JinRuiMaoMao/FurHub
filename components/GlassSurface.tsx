@@ -22,6 +22,7 @@ export type GlassMorphismLayersProps = {
    * `tabBarActive`: 相对底层 Tab 玻璃条略提亮 / 略压暗（浅色模式略暗、深色模式略亮），便于看出选中格。
    */
   surfaceContrast?: 'tabBarActive';
+  showBorder?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -34,6 +35,7 @@ export function GlassMorphismLayers({
   intensity = 56,
   vibe = 'neutral',
   surfaceContrast,
+  showBorder = true,
   style,
 }: GlassMorphismLayersProps) {
   const isDark = (useColorScheme() ?? 'light') === 'dark';
@@ -78,8 +80,8 @@ export function GlassMorphismLayers({
           {
             borderRadius,
             backgroundColor: baseOverlay,
-            borderWidth: StyleSheet.hairlineWidth * 2,
-            borderColor,
+            borderWidth: showBorder ? StyleSheet.hairlineWidth * 2 : 0,
+            borderColor: showBorder ? borderColor : 'transparent',
           },
         ]}
       />

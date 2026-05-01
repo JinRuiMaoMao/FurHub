@@ -23,7 +23,7 @@ export const koMessages: { [K in keyof ZhMessages]: string } = {
   mapTitle: '모임 지도',
   mapWebSubtitle:
     '웹에서는 네이티브 지도를 사용할 수 없습니다. iOS / Android 앱을 이용해 주세요. 목록 데이터는 FEC 이벤트 좌표와 일치합니다.',
-  mapNativeSubtitle: '빨간 핀을 눌러 상세를 확인하세요.',
+  mapNativeSubtitle: '핀을 눌러 상세를 확인하세요.',
   mapYear: '연도',
   mapMonth: '월',
   mapAll: '전체',
